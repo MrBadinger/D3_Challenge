@@ -54,3 +54,16 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
 
     chartGroup.append("g")
       .call(leftAxis);
+
+      
+    // Step 5: Create Circles
+    // ==============================
+    var circlesGroup = chartGroup.selectAll("circle")
+    .data(hairData)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xLinearScale(d.hair_length))
+    .attr("cy", d => yLinearScale(d.num_hits))
+    .attr("r", "15")
+    .attr("fill", "pink")
+    .attr("opacity", ".5");
