@@ -21,6 +21,8 @@ var svg = d3.select("#scatter")
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+
+
 // Import Data
 d3.csv("assets/data/data.csv").then(function(CSV_Data) {
 
@@ -34,7 +36,7 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
     // Step 2: Create scale functions
     // ==============================
     var xLinearScale = d3.scaleLinear()
-      .domain([20, d3.max(CSV_Data, d => d.poverty)])
+      .domain([0, d3.max(CSV_Data, d => d.poverty)])
       .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
@@ -59,14 +61,14 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
     // Step 5: Create Circles
     // ==============================
     var circlesGroup = chartGroup.selectAll("circle")
-    .data(CSV_Data)
-    .enter()
-    .append("circle")
-    .attr("cx", d => xLinearScale(d.poverty))
-    .attr("cy", d => yLinearScale(d.healthcare))
-    .attr("r", "15")
-    .attr("fill", "pink")
-    .attr("opacity", ".5");
+      .data(CSV_Data)
+      .enter()
+      .append("circle")
+      .attr("cx", d => xLinearScale(d.poverty))
+      .attr("cy", d => yLinearScale(d.healthcare))
+      .attr("r", "10")
+      .attr("opacity", ".8")
+      .classed("stateCircle", true);
 
         // Step 6: Initialize tool tip
     // ==============================
@@ -83,12 +85,13 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
 
     // Step 8: Create event listeners to display and hide the tooltip
     // ==============================
-    circlesGroup.on("click", function(data) {
+    circlesGroup.on("mouseover", function(data) {
       toolTip.show(data, this);
     })
       // onmouseout event
       .on("mouseout", function(data, index) {
         toolTip.hide(data);
+
       });
 
     // Create axes labels
@@ -98,12 +101,29 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .attr("class", "axisText")
-      .text("Number of Billboard 100 Hits");
+      .text("Lacks Healthcare (%)");
 
     chartGroup.append("text")
       .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
       .attr("class", "axisText")
-      .text("Hair Metal Band Hair Length (inches)");
+      .text("In Poverty (%)");
+
+
+
+    // Add state to circles
+    chartGroup.selectAll(".stateText")
+    .data(CSV_Data)
+    .enter()
+    .append("text")
+    .classed("stateText", true)
+    .attr("x", d => xLinearScale(d.poverty))
+    .attr("y", d => yLinearScale(d.healthcare))
+    .attr("dy", 3) // centers the text
+    .attr("font-size", "9px")
+    .text(function(d) { return d.abbr });
+
+
   }).catch(function(error) {
     console.log(error);
   });
+
