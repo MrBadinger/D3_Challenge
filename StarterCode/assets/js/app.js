@@ -70,10 +70,10 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
       .attr("opacity", ".8")
       .classed("stateCircle", true);
 
-        // Step 6: Initialize tool tip
+    // Step 6: Initialize tool tip
     // ==============================
     var toolTip = d3.tip()
-      .attr("class", "#d3-tip")
+      .attr("class", "d3-tip")
       .offset([80, -60])
       .html(function(d) {
         return (`${d.state}<br>Percent in Poverty: ${d.poverty}<br>% Percent Lacking Healthcare: ${d.healthcare}`);
@@ -111,14 +111,14 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
 
 
     // Add state to circles
-    chartGroup.selectAll(".stateText")
+    var state_group = chartGroup.selectAll(".stateText")
     .data(CSV_Data)
     .enter()
     .append("text")
     .classed("stateText", true)
     .attr("x", d => xLinearScale(d.poverty))
     .attr("y", d => yLinearScale(d.healthcare))
-    .attr("dy", 3) // centers the text
+    .attr("dy", 3)
     .attr("font-size", "9px")
     .text(function(d) { return d.abbr });
 
