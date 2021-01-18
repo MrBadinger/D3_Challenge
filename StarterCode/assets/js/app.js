@@ -31,4 +31,15 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
       data.healthcare = +data.healthcare;
     });
 
+    // Step 2: Create scale functions
+    // ==============================
+    var xLinearScale = d3.scaleLinear()
+      .domain([20, d3.max(CSV_Data, d => d.poverty)])
+      .range([0, width]);
+
+    var yLinearScale = d3.scaleLinear()
+      .domain([0, d3.max(CSV_Data, d => d.healthcare)])
+      .range([height, 0]);
+
+      
    
