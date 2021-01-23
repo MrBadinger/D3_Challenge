@@ -36,11 +36,11 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
     // Step 2: Create scale functions
     // ==============================
     var xLinearScale = d3.scaleLinear()
-      .domain([0, d3.max(CSV_Data, d => d.poverty)])
+      .domain([d3.min(CSV_Data, d => d.poverty) * 0.9, d3.max(CSV_Data, d => d.poverty) * 1.1])
       .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-      .domain([0, d3.max(CSV_Data, d => d.healthcare)])
+      .domain([d3.min(CSV_Data, d => d.healthcare) * 0.75, d3.max(CSV_Data, d => d.healthcare) * 1.1])
       .range([height, 0]);
 
     // Step 3: Create axis functions
@@ -70,6 +70,23 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
       .attr("opacity", ".8")
       .classed("stateCircle", true);
 
+
+
+    // Step 5.5: Create States
+    // ==============================
+    var state_group = chartGroup.selectAll(".stateText")
+    .data(CSV_Data)
+    .enter()
+    .append("text")
+    .classed("stateText", true)
+    .attr("x", d => xLinearScale(d.poverty))
+    .attr("y", d => yLinearScale(d.healthcare))
+    .attr("dy", 3)
+    .attr("font-size", "9px")
+    .text(function(d) { return d.abbr });
+
+
+
     // Step 6: Initialize tool tip
     // ==============================
     var toolTip = d3.tip()
@@ -81,7 +98,8 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
 
     // Step 7: Create tooltip in the chart
     // ==============================
-    chartGroup.call(toolTip);
+    circlesGroup.call(toolTip);
+    state_group.call(toolTip);
 
     // Step 8: Create event listeners to display and hide the tooltip
     // ==============================
@@ -93,6 +111,19 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
         toolTip.hide(data);
 
       });
+
+    
+    // Step 8: Create event listeners to display and hide the tooltip
+    // ==============================
+    state_group.on("mouseover", function(data) {
+      toolTip.show(data, this);
+    })
+      // onmouseout event
+      .on("mouseout", function(data, index) {
+        toolTip.hide(data);
+
+      });
+
 
     // Create axes labels
     chartGroup.append("text")
@@ -110,17 +141,7 @@ d3.csv("assets/data/data.csv").then(function(CSV_Data) {
 
 
 
-    // Add state to circles
-    var state_group = chartGroup.selectAll(".stateText")
-    .data(CSV_Data)
-    .enter()
-    .append("text")
-    .classed("stateText", true)
-    .attr("x", d => xLinearScale(d.poverty))
-    .attr("y", d => yLinearScale(d.healthcare))
-    .attr("dy", 3)
-    .attr("font-size", "9px")
-    .text(function(d) { return d.abbr });
+
 
 
   }).catch(function(error) {
